@@ -1,0 +1,1 @@
+Get-EventLog -LogName System -newest 3
