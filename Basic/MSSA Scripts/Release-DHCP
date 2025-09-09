@@ -1,0 +1,9 @@
+# Release and renew all DHCP leases on all network adapters (Windows PowerShell)
+
+Get-NetAdapter | Where-Object {$_.Status -eq 'Up'} | ForEach-Object {
+    $adapter = $_.Name
+    Write-Host "Releasing DHCP lease for adapter: $adapter"
+    ipconfig /release "$adapter"
+    Write-Host "Renewing DHCP lease for adapter: $adapter"
+    ipconfig /renew "$adapter"
+}
