@@ -1,0 +1,13 @@
+# Create a new local user named 'june'
+New-LocalUser -Name "june" -NoPassword
+
+# Add 'june' to the 'Users' group (default permissions)
+Add-LocalGroupMember -Group "Users" -Member "june"
+
+# Assign read and write permissions to a folder (example: C:\SharedFolder)
+$folderPath = "C:\SharedFolder"
+$acl = Get-Acl $folderPath
+$permission = "june","Modify","Allow"
+$accessRule = New-Object System.Security.AccessControl.FileSystemAccessRule $permission
+$acl.SetAccessRule($accessRule)
+Set-Acl $folderPath $acl
