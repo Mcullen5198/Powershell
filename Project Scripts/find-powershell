@@ -1,0 +1,40 @@
+# Find-PowerShellVersion.ps1
+# This script displays the installed PowerShell version(s) on your computer.
+
+Write-Host "Current PowerShell Version:"
+$PSVersionTable.PSVersion
+
+Write-Host "`nSearching for installed PowerShell executables..."
+
+# Find all pwsh.exe and powershell.exe in Program Files and Windows folders
+$paths = @(
+    "$env:ProgramFiles\PowerShell\*",
+    "$env:ProgramFiles\WindowsPowerShell\*",
+    "$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe",
+    "$env:ProgramFiles\PowerShell\7\pwsh.exe"
+)
+
+foreach ($path in $paths) {
+    if (Test-Path $path) {
+        Write-Host "`nFound: $path"
+        try {
+            & $path -NoProfile -Command '$PSVersionTable.PSVersion'
+        } catch {
+            Write-Host "Unable to get version from $path"
+        }
+    }
+}
+
+# Optionally, search PATH for pwsh.exe and powershell.exe
+$executables = @("pwsh.exe", "powershell.exe")
+foreach ($exe in $executables) {
+    $found = Get-Command $exe -ErrorAction SilentlyContinue
+    if ($found) {
+        Write-Host "`nFound in PATH: $($found.Source)"
+        try {
+            & $found.Source -NoProfile -Command '$PSVersionTable.PSVersion'
+        } catch {
+            Write-Host "Unable to get version from $($found.Source)"
+        }
+    }
+}
